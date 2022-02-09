@@ -11,10 +11,10 @@ DriveTrain::DriveTrain() {
 #ifdef ENABLE_DRIVETRAIN
   // Settings for Spark Max motor controllers should be done here, in code
   // and not in the Spark Max Client Software
-  m_rightMotorA.SetOpenLoopRampRate(ConDriveTrain::RAMP_RATE);
-  m_rightMotorB.SetOpenLoopRampRate(ConDriveTrain::RAMP_RATE);
-  m_leftMotorA.SetOpenLoopRampRate(ConDriveTrain::RAMP_RATE);
-  m_leftMotorB.SetOpenLoopRampRate(ConDriveTrain::RAMP_RATE);
+  m_rightMotorA.SetOpenLoopRampRate(unit_cast<double>(ConDriveTrain::RAMP_RATE));
+  m_rightMotorB.SetOpenLoopRampRate(unit_cast<double>(ConDriveTrain::RAMP_RATE));
+  m_leftMotorA.SetOpenLoopRampRate(unit_cast<double>(ConDriveTrain::RAMP_RATE));
+  m_leftMotorB.SetOpenLoopRampRate(unit_cast<double>(ConDriveTrain::RAMP_RATE));
 
   /* 
     To swap front & back of robot, swap the INVERTED/NONINVERTED below and add or remove the minus sign 
@@ -142,9 +142,11 @@ void DriveTrain::TankDrive(double left, double right){
 double DriveTrain::GetMaxOutput() {
     return m_maxOutput;
 }
-// Why is this method recursive?
 void DriveTrain::SetMaxOutput(double maxOutput) {
   m_maxOutput = maxOutput;
+  // This method looks recursive, but is not- two different objects with the same name
+  // RobotContainer::m_driveTrain is a DriveTrain (this)- SubsystemBase
+  // DriveTrain::m_driveTrain is an frc::DifferentialDrive- RobotDriveBase
   m_driveTrain.SetMaxOutput(maxOutput);
 }
 
@@ -157,16 +159,16 @@ void DriveTrain::ResetEncoders() {
 }
 
 // Account for two encoders per side
-double DriveTrain::GetRightDistanceInches() {
+inch_t DriveTrain::GetRightDistanceInches() {
   return (GetAverageRightEncoders() * ConDriveTrain::INCHES_PER_TICK);
 }
 
-double DriveTrain::GetLeftDistanceInches() {
+inch_t DriveTrain::GetLeftDistanceInches() {
   return (GetAverageLeftEncoders() * ConDriveTrain::INCHES_PER_TICK);
 }
 
 // Used by AutoDriveDistance
-double DriveTrain::GetAverageDistanceInches() {
+inch_t DriveTrain::GetAverageDistanceInches() {
   // FIXME: Should't these be added, or is one negative? I think we just REVERSE the encoder. CRE 2022-01-25
   return ((GetLeftDistanceInches() + GetRightDistanceInches()) / 2.0);
 }
@@ -179,13 +181,18 @@ double DriveTrain::GetAverageRightEncoders() {
   return (m_rightEncoderA.GetPosition() + m_rightEncoderB.GetPosition() ) / 2.0;
 }
 void DriveTrain::GoToAngle(double angle) {
-  angle *= ConDriveTrain::ANGLE_2_IN;
+  // This algorithm is a terrible hack. 
+  // It is an open loop command to the right wheels and left wheels
+  //  to go a particular distance in opposite directions.
+  // The constant below was derived empirically to equate a distance to 1 radian.
+  // It does not rely on gyro feedback to close the loop.
+  angle *= 25.5; //ConDriveTrain::ANGLE_2_IN;
   // FIXME: The following syntax is deprecated in 2022 and throws a warning error, but the recommended
   // fix throws a compiler/unknown reference error for CANSparkMax::ControlType
   //  Use SetReference(double, CANSparkMax::ControlType, int, double, SparkMaxPIDController::ArbFFUnits) instead [-Wdeprecated-declarations]
   //  right_pidController.SetReference(angle, rev::ControlType::kSmartMotion);
-  left_pidController.SetReference(angle, rev::ControlType::kSmartMotion);
-  right_pidController.SetReference(angle, rev::ControlType::kSmartMotion);
+  // left_pidController.SetReference(angle, rev::ControlType::kSmartMotion);
+  // right_pidController.SetReference(angle, rev::ControlType::kSmartMotion);
 }
 
 double DriveTrain::GetGyroAngle() {return gyro->GetAngle();}
