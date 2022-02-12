@@ -462,6 +462,20 @@ class AutoDriveDistance
 
 #include "OI.h"
 #include "Constants.h"
+#include <units/base.h>
+#include <units/angle.h>
+#include <units/angular_velocity.h>
+#include <units/dimensionless.h>
+#include <units/length.h>
+#include <units/time.h>
+#include <units/voltage.h>
+using namespace units;
+using namespace units::angle;
+using namespace units::angular_velocity;
+using namespace units::dimensionless;
+using namespace units::length;
+using namespace units::time;
+using namespace units::voltage;
 
 namespace ConDriveTrain {
     // Motors
@@ -472,25 +486,25 @@ namespace ConDriveTrain {
     //constexpr double ROTATION_FACTOR = 1/1.3;
 
     //Spark Max Settings
-    constexpr int RAMP_RATE = 0.100; //seconds
+    constexpr second_t RAMP_RATE = 0.100_s; //seconds
     constexpr bool INVERTED = true; //
     constexpr bool NONINVERTED = false; //
     
     // Neo Motor & Gearbox
-    constexpr double ENCODER_TICK_RESOLUTION = 42.0; // IS IT REALLY 42? or 48? or maybe 24?  
-    constexpr double GEAR_RATIO = 10.71; // Neo rotates 10.71 times for one rotation of the output
-    constexpr double WHEEL_DIAMETER = 6.0;
-    constexpr double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * M_PI; // Abt 19 in.
+    constexpr scalar_t ENCODER_TICK_RESOLUTION = 42.0; // IS IT REALLY 42? or 48? or maybe 24?  
+    constexpr scalar_t GEAR_RATIO = 10.71; // Neo rotates 10.71 times for one rotation of the output
+    constexpr meter_t WHEEL_DIAMETER = 6.0_in;
+    constexpr meter_t WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * M_PI; // Abt 19 in.
 
-    constexpr double TICKS_PER_WHEEL_REVOLUTION = ENCODER_TICK_RESOLUTION * GEAR_RATIO; // Abt 450 ticks
+    constexpr scalar_t TICKS_PER_WHEEL_REVOLUTION = ENCODER_TICK_RESOLUTION * GEAR_RATIO; // Abt 450 ticks
 
     //Conversions
-    constexpr double TICKS_PER_INCH = TICKS_PER_WHEEL_REVOLUTION / WHEEL_CIRCUMFERENCE; // Abt 24 ticks per inch
-    constexpr double INCHES_PER_TICK = WHEEL_CIRCUMFERENCE / TICKS_PER_WHEEL_REVOLUTION; // Abt 1/24 (.042)
+    //constexpr scalar_t TICKS_PER_INCH = TICKS_PER_WHEEL_REVOLUTION / WHEEL_CIRCUMFERENCE; // Abt 24 ticks per inch
+    constexpr meter_t INCHES_PER_TICK = WHEEL_CIRCUMFERENCE / TICKS_PER_WHEEL_REVOLUTION; // Abt 1/24 (.042)
 
     // degrees to in
-    constexpr double ANGLE_2_IN = 25.5*ConMath::PI/360; // FIXME: What is this fudge factor? 25.5?
-    constexpr double IN_2_ANGLE= 1/ANGLE_2_IN;
+    constexpr meter_t ANGLE_2_IN = 25.5_in;
+    //constexpr radian_t IN_2_ANGLE = 1.0 / ANGLE_2_IN;
 }
 
 class DriveTrain : public frc2::SubsystemBase {
@@ -533,9 +547,9 @@ class DriveTrain : public frc2::SubsystemBase {
 
   void SetMaxOutput(double maxOutput);
 
-  double GetRightDistanceInches();
-  double GetLeftDistanceInches();
-  double GetAverageDistanceInches();
+  inch_t GetRightDistanceInches();
+  inch_t GetLeftDistanceInches();
+  inch_t GetAverageDistanceInches();
   
   double GetAverageRightEncoders();
   double GetAverageLeftEncoders();
@@ -571,7 +585,7 @@ class DriveTrain : public frc2::SubsystemBase {
   double kMaxVel = 2000, kMinVel = 0, kMaxAcc = 1500, kAllErr = 0;
 
   // motor max RPM
-  const double MaxRPM = 5700;
+  const revolutions_per_minute_t MaxRPM = 5700_rpm;
 
 
   // Drive encoders
