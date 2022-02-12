@@ -13,7 +13,7 @@ AutoDriveDistance::AutoDriveDistance(DriveTrain *drivetrain) : m_driveTrain(driv
 void AutoDriveDistance::Initialize() {
   m_driveTrain->ResetEncoders();
   // Read the desired travel distance from network tables (shuffleboard driver input)
-  m_distance_inches = m_driveTrain->m_nte_b_DriveDistance.GetDouble(0.0);
+  m_distance_inches = inch_t(m_driveTrain->m_nte_b_DriveDistance.GetDouble(0.0));
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -23,7 +23,7 @@ void AutoDriveDistance::Execute() {
   constexpr double maxSpeed = 0.5;
   constexpr double rotation = 0.0;
 
-  double desiredSpeed = (m_distance_inches > m_driveTrain->GetAverageDistanceInches()) ? maxSpeed : -maxSpeed;
+  double desiredSpeed = 10; //(m_distance_inches > m_driveTrain->GetAverageDistanceInches()) ? maxSpeed : -maxSpeed;
   double speed = (((speedN - 1.0) * m_speedOut) + desiredSpeed) / speedN;
   m_driveTrain->ArcadeDrive(speed, rotation);
   m_speedOut = speed;
@@ -36,7 +36,7 @@ void AutoDriveDistance::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool AutoDriveDistance::IsFinished() {
-  constexpr double epsilon = 5.0;
-
-  return ((fabs(m_distance_inches + copysign(epsilon / 2.0, m_distance_inches))- m_driveTrain->GetAverageDistanceInches()) < epsilon);
+  constexpr meter_t epsilon = 5.0_in;
+  double sgn = 1.0; //m_distance_inches < 0 ? -1.0 : 1.0;
+  return ((fabs(m_distance_inches + sgn * epsilon / 2.0)- m_driveTrain->GetAverageDistanceInches()) < epsilon);
 }

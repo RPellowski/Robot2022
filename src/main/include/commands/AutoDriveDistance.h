@@ -30,6 +30,6 @@ class AutoDriveDistance
 
  private:
   DriveTrain *m_driveTrain;
-  double m_distance_inches; // CRE 2022-01-28 Read from shuffleboard NOT passed as argument
+  inch_t m_distance_inches; // CRE 2022-01-28 Read from shuffleboard NOT passed as argument
   double m_speedOut = 0.0;
 };
