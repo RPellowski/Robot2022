@@ -23,6 +23,7 @@
  * they are needed.
  */
 
+#if 0
 namespace ConMath {
     constexpr double PI = M_PI; // 3.141592;
     constexpr double METERS_2_INCH = .0254; // m/in
@@ -30,6 +31,7 @@ namespace ConMath {
     constexpr double RAD_2_DEG = 180.0/PI;
     constexpr double DEG_2_RAD = 1/RAD_2_DEG;
 }
+#endif
 
 namespace ConLimelight {
     constexpr int VISION_MODE = 0;
