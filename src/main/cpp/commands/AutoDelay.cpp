@@ -4,7 +4,7 @@
 
 #include "commands/AutoDelay.h"
 
-AutoDelay::AutoDelay(DriveTrain *drivetrain) : m_driveTrain(drivetrain) {
+AutoDelay::AutoDelay(units::time::second_t seconds) : m_seconds(seconds) {
   // Use addRequirements() here to declare subsystem dependencies.
   m_timer = frc::Timer(); 
 }

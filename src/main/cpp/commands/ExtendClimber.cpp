@@ -2,28 +2,27 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/Test.h"
-#include "subsystems/Intake.h"
+#include "commands/ExtendClimber.h"
 
-Test::Test(Intake *intake, int direction) : m_intake{intake}, m_direction{direction} {
+ExtendClimber::ExtendClimber(Climber *climber) : m_climber{climber} {
   // Use addRequirements() here to declare subsystem dependencies.
-  AddRequirements(intake);
+  AddRequirements(climber);
 }
 
 // Called when the command is initially scheduled.
-void Test::Initialize() {
-  // m_intake->TestRelay(m_direction);
-  m_intake->TestServo(m_direction);
-}
+void ExtendClimber::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void Test::Execute() {
+void ExtendClimber::Execute() {
+  m_climber->Extend();
 }
 
 // Called once the command ends or is interrupted.
-void Test::End(bool interrupted) {}
+void ExtendClimber::End(bool interrupted) {
+  m_climber->Stop();
+}
 
 // Returns true when the command should end.
-bool Test::IsFinished() {
+bool ExtendClimber::IsFinished() {
   return false;
 }

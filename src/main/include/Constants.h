@@ -10,6 +10,9 @@
 #include <cmath>  // for std::fabs
 #include <math.h>
 
+//On error, create env.h from env-default.h and modify ROBOT_VERSION_STRING
+#include "env.h"
+
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants.  This should not be used for any other
@@ -56,4 +59,8 @@ namespace ConLimelight {
     //                     -3.3894563533907176e-03, 2.5344430354806740e+00};
 
     constexpr double focalLength = 2.9272781257541; //mm
+}
+
+namespace ConSparkMax {
+    constexpr double POSITION_CONVERSION_FACTOR = 42.0;
 }

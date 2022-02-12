@@ -2,28 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/Test.h"
-#include "subsystems/Intake.h"
+#include "commands/Stow.h"
 
-Test::Test(Intake *intake, int direction) : m_intake{intake}, m_direction{direction} {
+Stow::Stow(Intake *intake) : m_intake{intake} {
   // Use addRequirements() here to declare subsystem dependencies.
   AddRequirements(intake);
 }
 
 // Called when the command is initially scheduled.
-void Test::Initialize() {
-  // m_intake->TestRelay(m_direction);
-  m_intake->TestServo(m_direction);
+void Stow::Initialize() {
+  m_intake->Stow();
 }
 
 // Called repeatedly when this Command is scheduled to run
-void Test::Execute() {
-}
+void Stow::Execute() {}
 
 // Called once the command ends or is interrupted.
-void Test::End(bool interrupted) {}
+void Stow::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool Test::IsFinished() {
-  return false;
+bool Stow::IsFinished() {
+  return true;
 }
